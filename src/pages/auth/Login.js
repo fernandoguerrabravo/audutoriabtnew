@@ -32,9 +32,7 @@ const Login = () => {
       name: formData.name,
       password: passwd
     };
-    console.log(passwd)
     const response = await new UserProviders().SignIn(body);
-    console.log(response)
 
     if(response.state === false){
       Swal.fire({
@@ -151,7 +149,7 @@ const Login = () => {
                   type="text"
                   id="default-01"
                   {...register('name', { required: "This field is required" })}
-                  defaultValue="info@softnio.com"
+                  defaultValue=""
                   placeholder="Enter username"
                   className="form-control-lg form-control" />
                 {errors.name && <span className="invalid">{errors.name.message}</span>}
@@ -183,7 +181,7 @@ const Login = () => {
                   type={passState ? "text" : "password"}
                   id="password"
                   {...register('passcode', { required: "This field is required" })}
-                  defaultValue="123456"
+                  defaultValue=""
                   placeholder="Enter your passcode"
                   className={`form-control-lg form-control ${passState ? "is-hidden" : "is-shown"}`} />
                 {errors.passcode && <span className="invalid">{errors.passcode.message}</span>}

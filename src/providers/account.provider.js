@@ -16,7 +16,7 @@ export class UserProviders {
     return sku;
   }
   async createUser (body) {
-    const resp = await this.httpClient.post('https://api.bt.stratego.cl/users/sign_in?pd=true', body, {
+    const resp = await this.httpClient.post('https://api.bt.stratego.cl/users/create?pd=true', body, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Access-Control-Allow-Origin': '*'

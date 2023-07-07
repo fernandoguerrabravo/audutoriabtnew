@@ -37,18 +37,18 @@ const Register = () => {
 
   const UserSchema = Yup.object().shape({
     name: Yup.string()
-      .min(2, 'Demasiado corto!')
-      .max(50, 'Demasiado largo!')
+      .min(2, 'too short!')
+      .max(50, 'too large!')
       .required('Required'),
-    email: Yup.string().email('Correo electrónico no válido').required('Required'),
+    email: Yup.string().email('invalid mail').required('Required'),
     passcode: Yup.string()
-      .required('Se requiere contraseña')
-      .min(5, 'Su contraseña es demasiado corta.')
-      .matches(/[a-zA-Z]/, 'La contraseña sólo puede contener letras latinas.'),
+      .required('password is required')
+      .min(5, 'your password is too short')
+      .matches(/[a-zA-Z]/, 'password cant contain latin characters.'),
     confirmpassword: Yup.string()
-      .required('Se requiere contraseña')
-      .min(5, 'Su contraseña es demasiado corta.')
-      .oneOf([Yup.ref('passcode'), null], 'Passwords no coinciden')
+      .required('password is required')
+      .min(5, 'your password is too short')
+      .oneOf([Yup.ref('passcode'), null], 'Passwords not match')
   });
 
   return <>
@@ -85,12 +85,11 @@ const Register = () => {
                     mail: values.email ,
                     password: passwd,
                   };
-                  // console.log(body)
                   const response = await new UserProviders().createUser(body);
                   if(response.data.state == true){
                     Swal.fire({
                       icon: 'success',
-                      title: 'Cliente agregado Satisfactoriamente',
+                      title: 'User created successfully',
                       text: 'Muy bien!',
                     }).then(() => {
                       window.location.replace('/auth-login');
@@ -98,7 +97,7 @@ const Register = () => {
                   } else {
                     Swal.fire({
                       icon: 'warning',
-                      title: 'Cliente no ingresado, verifique formato',
+                      title: 'User cant be created, please verify',
                       text: 'Algo salió mal!',
                     }).then(() => {
                       window.location.reload();
@@ -110,14 +109,14 @@ const Register = () => {
                   <Form className='is-alter'>
                     <FormGroup>
                       <label className='form-label' htmlFor='name'>
-                      Nombre
+                      User Name
                       </label>
                       <div className='form-control-wrap'>
                         <Field
                           type='text'
                           id='name'
                           name='name'
-                          placeholder='Enter your name'
+                          placeholder='Enter your user name'
                           className='form-control-lg form-control'
                         />
                         {errors.name && touched.name ? (
@@ -128,7 +127,7 @@ const Register = () => {
                     <FormGroup>
                       <div className='form-label-group'>
                         <label className='form-label' htmlFor='default-01'>
-                        Email
+                        Mail
                         </label>
                       </div>
                       <div className='form-control-wrap'>
@@ -136,7 +135,7 @@ const Register = () => {
                           type='text'
                           name='email'
                           className='form-control-lg form-control'
-                          placeholder='Enter your email address or username'
+                          placeholder='Enter your email address '
                         />
                         {errors.email && touched.email ? <div>{errors.email}</div> : null}
                       </div>
@@ -144,7 +143,7 @@ const Register = () => {
                     <FormGroup>
                       <div className='form-label-group'>
                         <label className='form-label' htmlFor='password'>
-                      Contraseña
+                      Password
                         </label>
                       </div>
                       <div className='form-control-wrap'>
@@ -162,7 +161,7 @@ const Register = () => {
                     <FormGroup>
                       <div className='form-label-group'>
                         <label className='form-label' htmlFor='password'>
-                      Confirmar contraseña
+                      Confirm Password
                         </label>
                       </div>
                       <div className='form-control-wrap'>
@@ -180,7 +179,7 @@ const Register = () => {
                     <FormGroup>
                       {/* <button type='submit'>holi</button> */}
                       <Button type='submit' color='primary' size='lg' className='btn-block' outline={undefined} disabled={undefined}>
-                        Registrar
+                        Register
                       </Button>
                     </FormGroup>
                   </Form>
