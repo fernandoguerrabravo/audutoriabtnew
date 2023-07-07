@@ -117,7 +117,6 @@ import Error504Modern from "../pages/error/504-modern";
 import Error504Classic from "../pages/error/504-classic";
 
 import Login from "../pages/auth/Login";
-import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import Success from "../pages/auth/Success";
 
@@ -127,6 +126,10 @@ import Search from "../spec";
 import Registro from "../registro";
 import Finregistro from "../registro/components/finregistro";
 import Templates from "../documents";
+import Register from "../pages/auth/Register";
+import Protected from "./protected_routes";
+
+const auth = localStorage.getItem('accessToken');
 
 const Pages = () => {
   const location = useLocation();
@@ -134,9 +137,11 @@ const Pages = () => {
     window.scrollTo(0, 0);
   }, [location]);
 
+  console.log(process.env.PUBLIC_URL)
   return (
     <Routes>
-      <Route path={`${process.env.PUBLIC_URL}`} element={<Layout />}>
+      
+      <Route path={`${process.env.PUBLIC_URL}`} element={<Protected isSignedIn={auth} ><Layout /> </Protected>}>
         <Route index element={<Invest />}></Route>
         <Route path="crypto" element={<Crypto />}></Route>
         <Route path="analytics" element={<Analytics />}></Route>

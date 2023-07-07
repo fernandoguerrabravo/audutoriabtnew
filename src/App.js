@@ -2,9 +2,10 @@ import Router from "./route/Index";
 import ThemeProvider from "./layout/provider/Theme";
 
 const App = () => {
+
   return (
     <ThemeProvider>
-      <Router />
+      <Router/>
     </ThemeProvider>
   );
 };

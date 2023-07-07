@@ -16,32 +16,99 @@ import {
 import { Form, Spinner, Alert } from "reactstrap";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { Hasher } from "../../helpers/hasher";
+import { UserProviders } from "../../providers/account.provider";
+import Swal from "sweetalert2";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [passState, setPassState] = useState(false);
   const [errorVal, setError] = useState("");
 
-  const onFormSubmit = (formData) => {
+  const onFormSubmit = async (formData) => {
     setLoading(true);
-    const loginName = "info@softnio.com";
-    const pass = "123456";
-    if (formData.name === loginName && formData.passcode === pass) {
-      localStorage.setItem("accessToken", "token");
-      setTimeout(() => {
-        window.history.pushState(
-          `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : "/"}`,
-          "auth-login",
-          `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : "/"}`
-        );
-        window.location.reload();
-      }, 1000);
-    } else {
-      setTimeout(() => {
-        setError("Cannot login with credentials");
-        setLoading(false);
-      }, 1000);
+    const passwd = Hasher.hash.asSHA512((formData.passcode));
+    const body = {
+      name: formData.name,
+      password: passwd
+    };
+    console.log(passwd)
+    const response = await new UserProviders().SignIn(body);
+    console.log(response)
+
+    if(response.state === false){
+      Swal.fire({
+        icon: 'info',
+        title: 'Credenciales Erroneas',
+      });
+    }else {
+      const token = response?.data?.replace(`b'`, '').replace(`'`, '');
+      localStorage.setItem('accessToken', token);
+      if(localStorage.getItem('accessToken')) {
+        setTimeout(() => {
+          window.history.pushState(
+            `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`,
+            'auth-login',
+            `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`
+          );
+          window.location.reload();
+        }, 2000);
+      } else {
+        setTimeout(() => {
+          setError('No se puede iniciar sesión con las credenciales');
+          setLoading(false);
+          Swal.fire({
+            icon: 'info',
+            title: 'Credenciales Erroneas',
+          });
+        }, 2000);
+      }
     }
+    setTimeout(() => {
+      window.history.pushState(
+        `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`,
+        'auth-login',
+        `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`
+      );
+      window.location.reload();
+    }, 2000);
+    
+    // if(response.error === 'Usuario y/o contraseña no coincide'){
+    //   Swal.fire({
+    //     icon: 'info',
+    //     title: 'Credenciales Erroneas',
+    //   });
+    // }else {
+    //   const token = response?.data?.replace(`b'`, '').replace(`'`, '');
+    //   localStorage.setItem('accessToken', token);
+    //   if(localStorage.getItem('accessToken')) {
+    //     setTimeout(() => {
+    //       window.history.pushState(
+    //         `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`,
+    //         'auth-login',
+    //         `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`
+    //       );
+    //       window.location.reload();
+    //     }, 2000);
+    //   } else {
+    //     setTimeout(() => {
+    //       setError('No se puede iniciar sesión con las credenciales');
+    //       setLoading(false);
+    //       Swal.fire({
+    //         icon: 'info',
+    //         title: 'Credenciales Erroneas',
+    //       });
+    //     }, 2000);
+    //   }
+    // }
+    // setTimeout(() => {
+    //   window.history.pushState(
+    //     `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`,
+    //     'auth-login',
+    //     `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`
+    //   );
+    //   window.location.reload();
+    // }, 2000);
   };
 
   const {  register, handleSubmit, formState: { errors } } = useForm();
@@ -76,7 +143,7 @@ const Login = () => {
             <div className="form-group">
               <div className="form-label-group">
                 <label className="form-label" htmlFor="default-01">
-                  Email or Username
+                  Username
                 </label>
               </div>
               <div className="form-control-wrap">
@@ -85,7 +152,7 @@ const Login = () => {
                   id="default-01"
                   {...register('name', { required: "This field is required" })}
                   defaultValue="info@softnio.com"
-                  placeholder="Enter your email address or username"
+                  placeholder="Enter username"
                   className="form-control-lg form-control" />
                 {errors.name && <span className="invalid">{errors.name.message}</span>}
               </div>
@@ -131,12 +198,12 @@ const Login = () => {
           <div className="form-note-s2 text-center pt-4">
             New on our platform? <Link to={`${process.env.PUBLIC_URL}/auth-register`}>Create an account</Link>
           </div>
-          <div className="text-center pt-4 pb-3">
+          {/* <div className="text-center pt-4 pb-3">
             <h6 className="overline-title overline-title-sap">
               <span>OR</span>
             </h6>
-          </div>
-          <ul className="nav justify-center gx-4">
+          </div> */}
+          {/* <ul className="nav justify-center gx-4">
             <li className="nav-item">
               <a
                 className="nav-link"
@@ -159,7 +226,7 @@ const Login = () => {
                 Google
               </a>
             </li>
-          </ul>
+          </ul> */}
         </PreviewCard>
       </Block>
       <AuthFooter />
