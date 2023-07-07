@@ -90,7 +90,7 @@ const Register = () => {
                     Swal.fire({
                       icon: 'success',
                       title: 'User created successfully',
-                      text: 'Muy bien!',
+                      text: 'all right!',
                     }).then(() => {
                       window.location.replace('/auth-login');
                     });
@@ -98,7 +98,7 @@ const Register = () => {
                     Swal.fire({
                       icon: 'warning',
                       title: 'User cant be created, please verify',
-                      text: 'Algo salió mal!',
+                      text: 'something error!',
                     }).then(() => {
                       window.location.reload();
                     });
