@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 import Logo from "../../images/logo.png";
 import LogoDark from "../../images/logo-dark.png";
 import Head from "../../layout/head/Head";
@@ -11,11 +10,9 @@ import {
   BlockHead,
   BlockTitle,
   Button,
-  Icon,
   PreviewCard,
 } from "../../components/Component";
-import { FormGroup, Spinner } from "reactstrap";
-import { useForm } from "react-hook-form";
+import { FormGroup } from "reactstrap";
 import { Link } from "react-router-dom";
 import * as Yup from 'yup';
 import { Formik, Form, Field } from "formik";
@@ -24,16 +21,6 @@ import { UserProviders } from "../../providers/account.provider";
 import Swal from "sweetalert2";
 
 const Register = () => {
-  const [passState, setPassState] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const navigate = useNavigate();
-  const handleFormSubmit = () => {
-    setLoading(true);
-    setTimeout(() => {
-      navigate(`${process.env.PUBLIC_URL}/auth-success`);
-    }, 1000);
-  };
 
   const UserSchema = Yup.object().shape({
     name: Yup.string()
@@ -86,7 +73,7 @@ const Register = () => {
                     password: passwd,
                   };
                   const response = await new UserProviders().createUser(body);
-                  if(response.data.state == true){
+                  if(response.data.state === true){
                     Swal.fire({
                       icon: 'success',
                       title: 'User created successfully',

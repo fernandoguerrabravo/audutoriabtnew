@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === "development") {
 
 // Logs out user
 export const handleSignout = () => {
-  localStorage.removeItem("accessToken");
+  localStorage.removeItem("accessDataToken");
 };
 
 //Function to validate and return errors for a form

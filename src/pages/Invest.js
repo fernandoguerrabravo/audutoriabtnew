@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import Content from "../layout/content/Content";
 import Head from "../layout/head/Head";
 import InvestOverview from "../components/partials/invest/invest-overview/InvestOverview";
@@ -22,9 +22,20 @@ import {
   TooltipComponent,
 } from "../components/Component";
 import { BalanceBarChart, DepositBarChart, WithdrawBarChart } from "../components/partials/charts/invest/InvestChart";
+import { UserProviders } from "../providers/account.provider";
 
 const InvestHomePage = () => {
   const [sm, updateSm] = useState(false);
+
+  const GetInfo = async ()  => {
+    const mail = await new UserProviders().getMail();
+    console.log(mail);
+  }
+
+  useLayoutEffect(() => { 
+    GetInfo();
+  }, []);
+  
   return (
     <React.Fragment>
       <Head title="Default Dashboard" />
