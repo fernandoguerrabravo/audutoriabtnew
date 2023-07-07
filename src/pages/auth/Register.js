@@ -14,9 +14,14 @@ import {
   Icon,
   PreviewCard,
 } from "../../components/Component";
-import { Spinner } from "reactstrap";
+import { FormGroup, Spinner } from "reactstrap";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import * as Yup from 'yup';
+import { Formik, Form, Field } from "formik";
+import { Hasher } from "../../helpers/hasher";
+import { UserProviders } from "../../providers/account.provider";
+import Swal from "sweetalert2";
 
 const Register = () => {
   const [passState, setPassState] = useState(false);
@@ -29,6 +34,23 @@ const Register = () => {
       navigate(`${process.env.PUBLIC_URL}/auth-success`);
     }, 1000);
   };
+
+  const UserSchema = Yup.object().shape({
+    name: Yup.string()
+      .min(2, 'too short!')
+      .max(50, 'too large!')
+      .required('Required'),
+    email: Yup.string().email('invalid mail').required('Required'),
+    passcode: Yup.string()
+      .required('password is required')
+      .min(5, 'your password is too short')
+      .matches(/[a-zA-Z]/, 'password cant contain latin characters.'),
+    confirmpassword: Yup.string()
+      .required('password is required')
+      .min(5, 'your password is too short')
+      .oneOf([Yup.ref('passcode'), null], 'Passwords not match')
+  });
+
   return <>
     <Head title="Register" />
       <Block className="nk-block-middle nk-auth-body  wide-xs">
@@ -47,72 +69,122 @@ const Register = () => {
               </BlockDes>
             </BlockContent>
           </BlockHead>
-          <form className="is-alter" onSubmit={handleSubmit(handleFormSubmit)}>
-            <div className="form-group">
-              <label className="form-label" htmlFor="name">
-                Name
-              </label>
-              <div className="form-control-wrap">
-                <input
-                  type="text"
-                  id="name"
-                  {...register('name', { required: true })}
-                  placeholder="Enter your name"
-                  className="form-control-lg form-control" />
-                {errors.name && <p className="invalid">This field is required</p>}
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="form-label-group">
-                <label className="form-label" htmlFor="default-01">
-                  Email or Username
-                </label>
-              </div>
-              <div className="form-control-wrap">
-                <input
-                  type="text"
-                  bssize="lg"
-                  id="default-01"
-                  {...register('email', { required: true })}
-                  className="form-control-lg form-control"
-                  placeholder="Enter your email address or username" />
-                {errors.email && <p className="invalid">This field is required</p>}
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="form-label-group">
-                <label className="form-label" htmlFor="password">
-                  Passcode
-                </label>
-              </div>
-              <div className="form-control-wrap">
-                <a
-                  href="#password"
-                  onClick={(ev) => {
-                    ev.preventDefault();
-                    setPassState(!passState);
-                  }}
-                  className={`form-icon lg form-icon-right passcode-switch ${passState ? "is-hidden" : "is-shown"}`}
-                >
-                  <Icon name="eye" className="passcode-icon icon-show"></Icon>
-
-                  <Icon name="eye-off" className="passcode-icon icon-hide"></Icon>
-                </a>
-                <input
-                  type={passState ? "text" : "password"}
-                  id="password"
-                  {...register('passcode', { required: "This field is required" })}
-                  placeholder="Enter your passcode"
-                  className={`form-control-lg form-control ${passState ? "is-hidden" : "is-shown"}`} />
-                {errors.passcode && <span className="invalid">{errors.passcode.message}</span>}
-              </div>
-            </div>
-            <div className="form-group">
-              <Button type="submit" color="primary" size="lg" className="btn-block">
-                {loading ? <Spinner size="sm" color="light" /> : "Register"}
-              </Button>
-            </div>
-          </form>
+          <Formik
+                initialValues={{
+                  name: '',
+                  tax_id: '',
+                  email: '',
+                  passcode: '',
+                  confirmpassword: ''
+                }}
+                validationSchema={UserSchema}
+                onSubmit={ async (values) => {
+                  const passwd = Hasher.hash.asSHA512((values.passcode));
+                  const body = {
+                    name: values.name ,
+                    mail: values.email ,
+                    password: passwd,
+                  };
+                  const response = await new UserProviders().createUser(body);
+                  if(response.data.state == true){
+                    Swal.fire({
+                      icon: 'success',
+                      title: 'User created successfully',
+                      text: 'Muy bien!',
+                    }).then(() => {
+                      window.location.replace('/auth-login');
+                    });
+                  } else {
+                    Swal.fire({
+                      icon: 'warning',
+                      title: 'User cant be created, please verify',
+                      text: 'Algo salió mal!',
+                    }).then(() => {
+                      window.location.reload();
+                    });
+                  }
+                }}
+              >
+                {({ errors, touched }) => (
+                  <Form className='is-alter'>
+                    <FormGroup>
+                      <label className='form-label' htmlFor='name'>
+                      User Name
+                      </label>
+                      <div className='form-control-wrap'>
+                        <Field
+                          type='text'
+                          id='name'
+                          name='name'
+                          placeholder='Enter your user name'
+                          className='form-control-lg form-control'
+                        />
+                        {errors.name && touched.name ? (
+                          <div>{errors.name}</div>
+                        ) : null}
+                      </div>
+                    </FormGroup>
+                    <FormGroup>
+                      <div className='form-label-group'>
+                        <label className='form-label' htmlFor='default-01'>
+                        Mail
+                        </label>
+                      </div>
+                      <div className='form-control-wrap'>
+                        <Field
+                          type='text'
+                          name='email'
+                          className='form-control-lg form-control'
+                          placeholder='Enter your email address '
+                        />
+                        {errors.email && touched.email ? <div>{errors.email}</div> : null}
+                      </div>
+                    </FormGroup>
+                    <FormGroup>
+                      <div className='form-label-group'>
+                        <label className='form-label' htmlFor='password'>
+                      Password
+                        </label>
+                      </div>
+                      <div className='form-control-wrap'>
+                        <Field
+                          type='password'
+                          name='passcode'
+                          placeholder='Enter your password'
+                          className='form-control-lg form-control'
+                        />
+                        {errors.passcode && touched.passcode ? (
+                          <div>{errors.passcode}</div>
+                        ) : null}
+                      </div>
+                    </FormGroup>
+                    <FormGroup>
+                      <div className='form-label-group'>
+                        <label className='form-label' htmlFor='password'>
+                      Confirm Password
+                        </label>
+                      </div>
+                      <div className='form-control-wrap'>
+                        <Field
+                          type='password'
+                          name='confirmpassword'
+                          placeholder='Confirm your password'
+                          className='form-control-lg form-control'
+                        />
+                        {errors.confirmpassword && touched.confirmpassword ? (
+                          <div>{errors.confirmpassword}</div>
+                        ) : null}
+                      </div>
+                    </FormGroup>
+                    <FormGroup>
+                      {/* <button type='submit'>holi</button> */}
+                      <Button type='submit' color='primary' size='lg' className='btn-block' outline={undefined} disabled={undefined}>
+                        Register
+                      </Button>
+                    </FormGroup>
+                  </Form>
+                )}
+              </Formik>
           <div className="form-note-s2 text-center pt-4">
             {" "}
             Already have an account?{" "}
@@ -120,7 +192,7 @@ const Register = () => {
               <strong>Sign in instead</strong>
             </Link>
           </div>
-          <div className="text-center pt-4 pb-3">
+          {/* <div className="text-center pt-4 pb-3">
             <h6 className="overline-title overline-title-sap">
               <span>OR</span>
             </h6>
@@ -148,7 +220,7 @@ const Register = () => {
                 Google
               </a>
             </li>
-          </ul>
+          </ul> */}
         </PreviewCard>
       </Block>
       <AuthFooter />
