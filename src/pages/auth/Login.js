@@ -41,8 +41,8 @@ const Login = () => {
       });
     }else {
       const token = response?.data?.replace(`b'`, '').replace(`'`, '');
-      localStorage.setItem('accessToken', token);
-      if(localStorage.getItem('accessToken')) {
+      localStorage.setItem('accessDataToken', token);
+      if(localStorage.getItem('accessDataToken')) {
         setTimeout(() => {
           window.history.pushState(
             `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`,
@@ -70,43 +70,6 @@ const Login = () => {
       );
       window.location.reload();
     }, 2000);
-    
-    // if(response.error === 'Usuario y/o contraseña no coincide'){
-    //   Swal.fire({
-    //     icon: 'info',
-    //     title: 'Credenciales Erroneas',
-    //   });
-    // }else {
-    //   const token = response?.data?.replace(`b'`, '').replace(`'`, '');
-    //   localStorage.setItem('accessToken', token);
-    //   if(localStorage.getItem('accessToken')) {
-    //     setTimeout(() => {
-    //       window.history.pushState(
-    //         `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`,
-    //         'auth-login',
-    //         `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`
-    //       );
-    //       window.location.reload();
-    //     }, 2000);
-    //   } else {
-    //     setTimeout(() => {
-    //       setError('No se puede iniciar sesión con las credenciales');
-    //       setLoading(false);
-    //       Swal.fire({
-    //         icon: 'info',
-    //         title: 'Credenciales Erroneas',
-    //       });
-    //     }, 2000);
-    //   }
-    // }
-    // setTimeout(() => {
-    //   window.history.pushState(
-    //     `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`,
-    //     'auth-login',
-    //     `${process.env.PUBLIC_URL ? process.env.PUBLIC_URL : '/'}`
-    //   );
-    //   window.location.reload();
-    // }, 2000);
   };
 
   const {  register, handleSubmit, formState: { errors } } = useForm();

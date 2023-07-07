@@ -129,7 +129,7 @@ import Templates from "../documents";
 import Register from "../pages/auth/Register";
 import Protected from "./protected_routes";
 
-const auth = localStorage.getItem('accessToken');
+const auth = localStorage.getItem('accessDataToken');
 
 const Pages = () => {
   const location = useLocation();
@@ -137,7 +137,6 @@ const Pages = () => {
     window.scrollTo(0, 0);
   }, [location]);
 
-  console.log(process.env.PUBLIC_URL)
   return (
     <Routes>
       
