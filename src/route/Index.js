@@ -128,6 +128,7 @@ import Finregistro from "../registro/components/finregistro";
 import Templates from "../documents";
 import Register from "../pages/auth/Register";
 import Protected from "./protected_routes";
+import Profiles from "../profile";
 
 const auth = localStorage.getItem('accessDataToken');
 
@@ -299,6 +300,7 @@ const Pages = () => {
         <Route path="spec" element={<Search />}></Route>
         <Route path="registro" element={<Registro />}></Route>
         <Route path="documentos" element={<Templates />}></Route>
+        <Route path="profile" element={<Profiles />}></Route>
         <Route //Context Api added
           path={"finregistro/:id"}
           element= {<Finregistro />}

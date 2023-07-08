@@ -22,7 +22,7 @@ const blobToBase64 = async (file) =>
 );
 
 const Subirfiles = ({ modal, setModal }) => {
-  const {user} = useAuth0();
+  const user = 'btpdi'
   const MAXIMUM_FILES_LIMIT = null;
   /**
    * Size in MB
@@ -153,7 +153,7 @@ const Subirfiles = ({ modal, setModal }) => {
   const handleFilesSubmit = async (event) => {
     event.preventDefault();
     for (const file of files) {
-      const response = await new FileProvider().submitFiles(file, user)
+      const response = await new FileProvider().sendProfile(file, user)
       if (response.data === 'ok'){
         Swal.fire({
           icon: 'success',
@@ -171,16 +171,16 @@ const Subirfiles = ({ modal, setModal }) => {
   };
   return (
     <React.Fragment>
-      {/* <Modal
+      <Modal
         isOpen={modal}
         className="modal-dialog-centered"
         size="lg"
         toggle={() => {
           setModal(false);
         }}
-      > */}
-        {/* <ModalBody> */}
-          {/* <a
+      >
+        <ModalBody>
+          <a
             href="#dropdownitem"
             onClick={(ev) => {
               ev.preventDefault();
@@ -189,7 +189,7 @@ const Subirfiles = ({ modal, setModal }) => {
             className="close"
           >
             <Icon name="cross-sm"></Icon>
-          </a> */}
+          </a>
           <div className="p-2">
             <h5 className="title text-primary">Upload Files</h5>
             <hr></hr>
@@ -269,8 +269,8 @@ const Subirfiles = ({ modal, setModal }) => {
               </form>
             </Content>
           </div>
-       {/* </ModalBody> */}
-      {/* </Modal>  */}
+        </ModalBody>
+      </Modal>
     </React.Fragment>
   );
 };

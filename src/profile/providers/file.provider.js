@@ -23,7 +23,7 @@ class FileProvider {
 		const formData = new FormData();
 		formData.append('file', file);
 		return await this.httpClient.post(
-			`https://apiecl.com/uploaddocuments?id_seller=mybt-auditoria/pdi`,
+			`https://apiecl.com/uploaddocuments?id_seller=${user}`,
 			formData,
 			{
 				headers: {
@@ -53,7 +53,7 @@ class FileProvider {
 		);
 	}  
 
-	async submitFiles(files,sku) {
+	async submitFiles(files, refId, sku) {
 		return await this.httpClient.post(`https://apiecl.com/uploaddocuments?id_seller=amazon|amzn1.account.AHG4S7Q35E4KB5DZGK6BENXDZ6IQ`, files);
 	}
 
