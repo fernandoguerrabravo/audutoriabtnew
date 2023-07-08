@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
-import React, { useState, useEffect } from "react";
+import React, { useLayoutEffect, useState, useEffect } from "react";
 import Head from "../../layout/head/Head";
 import Content from "../../layout/content/Content";
 // import { pusher_ecl } from "../../lib";
@@ -16,7 +16,7 @@ import {
 } from "../../components/Component";
 // import Sellerinfo from "./sellerinfo";
 // import { GetSeller } from "../helpers/getseller";
-import { useAuth0 } from "@auth0/auth0-react";
+
 import { monthNames, todaysDate } from "../../utils/Utils";
 import { Link } from "react-router-dom";
 import {
@@ -32,15 +32,24 @@ import {
 } from "reactstrap";
 import DocumentsLegales from "./documentslegales";
 import Subirfiles from "./subirarchivos";
+import { UserProviders } from "../../providers/account.provider";
 
 const Principal = () => {
-  const { user } = useAuth0();
-  
+  const [user,setuser] = useState() 
+  const GetInfo = async ()  => {
+    const mail = await new UserProviders().getMail();
+    console.log("USUARIO",mail.mail);
+    return mail.mail
+  }
+
+  useLayoutEffect(() => { 
+    GetInfo().then((info) => setuser(info));
+  }, []);
   //   var channel = pusher_ecl.subscribe("my-channel");
   //   channel.bind("my-event", function (data) {
   //     alert(JSON.stringify(data));
   //   });
-  const clave = `documents/shipping`;
+  const clave = `mybt-auditoria/pdi`;
   return (
     <React.Fragment>
       <Head title="Templates"></Head>
@@ -51,9 +60,9 @@ const Principal = () => {
               <BlockTitle page tag="h3">
                 Templates and Documents
               </BlockTitle>
-              <BlockDes className="text-soft">
-                <p></p>
-              </BlockDes>
+              {/* <BlockDes className="text-soft">
+          
+              </BlockDes> */}
             </BlockHeadContent>
           </BlockBetween>
         </BlockHead>
@@ -68,12 +77,10 @@ const Principal = () => {
                       <img src="icons8-robot-3-400.svg" alt="" />{" "}
                     </Col>{" "} */}
                     <Col sm="12">
-                      <CardText>
-                        <DocumentsLegales clave = {clave}></DocumentsLegales>
-                      </CardText>{" "}
+                        <DocumentsLegales clave = {clave} user={user}></DocumentsLegales>
                     </Col>
                   </Row>
-                  <Subirfiles></Subirfiles>
+                  {/* <Subirfiles></Subirfiles> */}
                 </CardBody>
               </Card>
             </PreviewAltCard>

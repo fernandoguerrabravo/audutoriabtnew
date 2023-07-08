@@ -15,19 +15,16 @@ import Subirfiles from "./subirarchivos";
 import { DeleteDocument } from "../helpers/deletedocuments";
 import Swal from "sweetalert2";
 import { BajarDocument } from "../helpers/bajardocumentos";
-import { useAuth0 } from "@auth0/auth0-react";
-const DocumentsLegales = ({clave}) => {
-  const { user } = useAuth0();
-  const [documents, setdocuments] = useState();
-  const [modal, setModal] = useState(false);
 
-  const upload = () => {
-    setModal(true);
-  };
+const DocumentsLegales = ({clave, user}) => {
+ 
+  const [documents, setdocuments] = useState();
+  
+
 
   useEffect(() => {
     GetDocumentos(clave).then((response) => setdocuments(response));
-  }, [setModal, modal, clave]);
+  }, [clave]);
 
   const ActionComponent = ({ id, text, color, icon, row, onClick }) => {
     const clickHandler = () => onClick(row);
@@ -125,7 +122,7 @@ const DocumentsLegales = ({clave}) => {
             <span>Upload</span>
           </Button> */}
         </div>
-      </div>
+      </div>{user}
       <DataTable
         responsive
         pointerOnHover
@@ -135,7 +132,7 @@ const DocumentsLegales = ({clave}) => {
         columns={columnas}
         data={documents}
       />
-      {/* <Subirfiles modal={modal} setModal={setModal}></Subirfiles> */}
+      <Subirfiles></Subirfiles> 
     </React.Fragment>
   );
 };

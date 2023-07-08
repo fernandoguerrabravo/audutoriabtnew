@@ -23,7 +23,7 @@ class FileProvider {
 		const formData = new FormData();
 		formData.append('file', file);
 		return await this.httpClient.post(
-			`https://apiecl.com/uploaddocuments?id_seller=${user.sub}/legales`,
+			`https://apiecl.com/uploaddocuments?id_seller=mybt-auditoria/pdi`,
 			formData,
 			{
 				headers: {

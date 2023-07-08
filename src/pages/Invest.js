@@ -29,7 +29,7 @@ const InvestHomePage = () => {
 
   const GetInfo = async ()  => {
     const mail = await new UserProviders().getMail();
-    console.log(mail);
+    console.log("USUARIO",mail);
   }
 
   useLayoutEffect(() => { 
